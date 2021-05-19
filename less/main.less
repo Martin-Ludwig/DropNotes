@@ -1,0 +1,29 @@
+html {
+    background-color: @bgcolor;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui;
+}
+
+#tab-bar {
+    display: flex;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    height: 30px;
+    min-width: 120px;
+
+    &.active {
+        background-color: @activetab-bgcolor;
+    }
+}
+
+#content {
+    padding: 15px;
+    font-size: 18px;
+}
