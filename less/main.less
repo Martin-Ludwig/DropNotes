@@ -9,6 +9,7 @@ body {
 
 #tab-bar {
     display: flex;
+    height: 40px;
 }
 
 .tab {
@@ -24,6 +25,16 @@ body {
 }
 
 #content {
-    padding: 15px;
+    display: flex;
     font-size: 18px;
+    min-height: calc(~"100vh - 40px");
+    align-items: stretch;
+    
+    .ql-editor {
+        padding: 15px;
+        overflow: initial;
+        width: 100%;
+        height: unset;
+        margin: 0;
+    }
 }

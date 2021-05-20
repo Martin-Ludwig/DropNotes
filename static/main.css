@@ -1,3 +1,9 @@
+/* 
+Use https://lesscss.org/ to compile less files to css. Use with Node.js: npm install -g less
+
+Cli command:
+lessc ./less/light-theme.less ./static/main.css
+*/
 html {
   background-color: #fff;
 }
@@ -7,6 +13,7 @@ body {
 }
 #tab-bar {
   display: flex;
+  height: 40px;
 }
 .tab {
   display: flex;
@@ -19,6 +26,15 @@ body {
   background-color: #f4f4f4;
 }
 #content {
-  padding: 15px;
+  display: flex;
   font-size: 18px;
+  min-height: calc(100vh - 40px);
+  align-items: stretch;
+}
+#content .ql-editor {
+  padding: 15px;
+  overflow: initial;
+  width: 100%;
+  height: unset;
+  margin: 0;
 }
