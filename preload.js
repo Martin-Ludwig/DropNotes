@@ -2,6 +2,7 @@ const PouchDB = require('pouchdb');
 const db = new PouchDB('./data/local');
 
 const htmlContentDiv = '.ql-editor'
+var contentDiv;
 
 let currentTab;
 let content;
@@ -9,26 +10,24 @@ let content;
 let keyupTimeout;
 let saveContentDelay = 700;
 
-// Get Content and put contents in editor
+let status;
+
+// Get content and put contents in editor
 async function SetContent(tabId, element) {
     // Todo refactor GetTab and better error handling
     currentTab = await GetTab(tabId);
-    console.log("init currentTab", currentTab)
-    console.log("init content", content)
     if (currentTab && currentTab["contents"]) {
         content = currentTab["contents"];
     } else {
         content = ''
     }
     document.querySelector(element).innerHTML = content;
+    FocusEditor(document.querySelector(htmlContentDiv));
 }
 
 
 window.addEventListener('DOMContentLoaded', () => {
     SetContent('tab1', htmlContentDiv);
-
-    console.log("init currentTab", currentTab)
-    console.log("init content", content)
 
     var toolbarOptions = [
         ['bold', 'italic', 'underline'],
@@ -44,19 +43,32 @@ window.addEventListener('DOMContentLoaded', () => {
     var Quill = require('quill')
 
     var editor = new Quill('#content', options);
+    contentDiv = document.querySelector(htmlContentDiv);
 
     // auto save
-    document.addEventListener('keyup', function (event) {
-        clearTimeout(keyupTimeout);
-        keyupTimeout = setTimeout(SaveContent, saveContentDelay);
-    })
+    // Todo: save after using toolbar option
+    contentDiv.addEventListener("input", OnContentChange);
+    contentDiv.addEventListener("paste", OnContentChange);
+    contentDiv.addEventListener("keyup", (event) => {
+        if (event.keyCode == "8" || event.keyCode == "46") {
+            OnContentChange();
+        }
+    });
+
+    status = document.querySelector("#status")
 })
+
+function OnContentChange() {
+    console.log("OnContentChange")
+    clearTimeout(keyupTimeout);
+    keyupTimeout = setTimeout(SaveContent, saveContentDelay);
+    status.innerHTML = "typing"
+}
 
 function SaveContent() {
     content = document.querySelector(htmlContentDiv).innerHTML;
-    console.log("SAVING NEW CONTENT= ", content)
-
     UpsertTab('tab1', content)
+    status.innerHTML = "saved"
 }
 
 function UpsertTab(tabId, content) {
@@ -89,4 +101,14 @@ function GetTab(tabId) {
             console.log(err);
         });
     });
+}
+
+// Sets the caret (text cursor) behind the last character
+function FocusEditor(contentEditableElement) {
+    range = document.createRange();
+    range.selectNodeContents(contentEditableElement);
+    range.collapse(false);
+    selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
 }

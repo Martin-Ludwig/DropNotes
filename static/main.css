@@ -37,4 +37,15 @@ body {
   width: 100%;
   height: unset;
   margin: 0;
+  margin-bottom: 22px;
+}
+#status {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  background-color: #fff;
+  z-index: 1;
+  user-select: none;
+  padding: 3px;
+  font-size: 12px;
 }
