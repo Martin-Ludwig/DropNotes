@@ -25,19 +25,22 @@ body {
 .tab.active {
   background-color: #f4f4f4;
 }
-#content {
+#editor {
+  flex-direction: column;
   display: flex;
   font-size: 18px;
   min-height: calc(100vh - 40px);
   align-items: stretch;
 }
-#content .ql-editor {
+#editor .content {
   padding: 15px;
   overflow: initial;
-  width: 100%;
-  height: unset;
+  flex: 1;
   margin: 0;
   margin-bottom: 22px;
+}
+#editor .content:focus {
+  outline: none;
 }
 #status {
   position: fixed;
