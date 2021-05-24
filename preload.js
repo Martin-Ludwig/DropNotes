@@ -1,44 +1,81 @@
 const { dropnotesdata } = require('./db-utils')
 
-const showTab = 'tab1';
+let showTab = 'tab1';
 const htmlContentDiv = 'content';
 
 let contentDiv;
-let currentTab;
+let activeTab;
+let tablist;
 
 let keyupTimeout;
 let saveContentDelay = 700;
 
 let status;
 
+const { getTablist, addTab } = require('./tablist.js')
+
+
+
 window.addEventListener('DOMContentLoaded', () => {
+    buildTabs();
 
     new Promise((resolve, reject) => {
         initEditor();
         resolve();
     }).then(() => {
-        SetContent(showTab, htmlContentDiv);
+        SetContent(showTab);
         contentDiv = document.getElementById('editor').getElementsByClassName(htmlContentDiv)[0]
 
         status = document.querySelector("#status");
     }).catch((err) => {
     })
 
+    document.getElementById('add-new-tab').addEventListener("click", () => {
+        createNewTab();
+    });
+
+
+
 })
+
+async function loadTablist() {
+    tablist = getTablist();
+    if (tablist.length == 0) {
+        // initialize first tab
+        newtab = await dropnotesdata.createEmptyTab();
+        tablist = addTab(newtab["displayname"], newtab["_id"]);
+    }
+
+    showTab = tablist[0]["id"];
+}
+
+async function buildTabs() {
+    await loadTablist();
+
+    const tabbar = document.getElementById('tab-bar');
+
+    tablist.forEach(element => {
+        tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.innerHTML = element['name'];
+
+        tabbar.appendChild(tab);
+    });
+}
+
 
 // todo: refactor
 // Get content and put contents in editor
-async function SetContent(tabId, element) {
-    currentTab = await dropnotesdata.getTab(tabId);
+async function SetContent(tabId) {
+    activeTab = await dropnotesdata.getTab(tabId);
 
-    if (currentTab) {
-        if (currentTab["contents"]) {
-            content = currentTab["contents"];
+    if (activeTab) {
+        if (activeTab["contents"]) {
+            content = activeTab["contents"];
         } else {
             content = ''
         }
     } else {
-        dropnotesdata.createEmptyTab(tabId)
         content = ''
     }
 
@@ -57,7 +94,7 @@ function OnContentChange() {
 
 function SaveContent() {
     content = contentDiv.innerHTML;
-    dropnotesdata.upsertTab(currentTab["_id"], content)
+    dropnotesdata.upsertTab(showTab, content)
     status.innerHTML = "saved"
 }
 
@@ -101,4 +138,18 @@ function initEditor() {
         }
     })
 
+}
+
+async function createNewTab() {
+    newtab = await dropnotesdata.createEmptyTab();
+    addTab(newtab["displayname"], newtab["_id"]);
+
+    tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.innerHTML = newtab["displayname"];
+
+    //div.setAttrivute('id', )
+    document.getElementById('tab-bar').appendChild(tab);
+
+    SetContent(newtab["_id"]);
 }

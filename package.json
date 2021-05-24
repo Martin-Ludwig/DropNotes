@@ -6,7 +6,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "pell": "^1.0.6",
-    "pouchdb": "^7.2.2"
+    "pouchdb": "^7.2.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.55",

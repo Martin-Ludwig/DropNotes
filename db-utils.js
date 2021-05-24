@@ -1,15 +1,15 @@
 const PouchDB = require('pouchdb');
-
-// Todo: delete tab
+const { v4: uuidv4 } = require('uuid');
 
 class DropNotesData {
 
-    static createEmptyTab(tabId) {
+    static createEmptyTab() {
         return DropNotesData.db.put({
-            _id: tabId,
-            contents: ''
-        }).then(function (response) {
-            // handle response
+            _id: uuidv4(),
+            displayname: "new",
+            contents: ""
+        }).then(function (doc) {
+            return DropNotesData.getTab(doc.id);
         }).catch(function (err) {
             console.log(err);
         });
@@ -38,8 +38,22 @@ class DropNotesData {
         });
     }
 
+    static deleteTab(tabId) {
+        DropNotesData.db.get('tabId').then(function (doc) {
+            return db.remove(doc);
+        }).then(function (result) {
+            // handle result
+        }).catch(function (err) {
+            console.log(err);
+        });
+    }
+
+    static getAllTabs() {
+        return DropNotesData.db.allDocs();
+    }
+
 }
 
-DropNotesData.db = new PouchDB('./data/local');
+DropNotesData.db = new PouchDB('./data/local/db');
 
 module.exports.dropnotesdata = DropNotesData;
