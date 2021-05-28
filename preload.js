@@ -34,8 +34,6 @@ window.addEventListener('DOMContentLoaded', () => {
         createNewTab();
     });
 
-
-
 })
 
 async function loadTablist() {
@@ -58,6 +56,21 @@ async function buildTabs() {
         tab = document.createElement('div');
         tab.className = 'tab';
         tab.innerHTML = element['name'];
+        tab.setAttribute("data-id", element['id'])
+        tab.addEventListener("click", (element) => {
+            console.log("Clicked element= ", element.target)
+            id = element.target.getAttribute("data-id");
+            if (id != "undefined") {
+                // save current tab
+                // Todo: only save on content change
+                SaveContent(showTab, contentDiv.innerHTML);
+
+                // switch tab
+                // todo: don't switch to same tab
+                showTab = id;
+                SetContent(id);
+            }
+        });
 
         tabbar.appendChild(tab);
     });
@@ -88,13 +101,16 @@ async function SetContent(tabId) {
 
 function OnContentChange() {
     clearTimeout(keyupTimeout);
-    keyupTimeout = setTimeout(SaveContent, saveContentDelay);
+    keyupTimeout = setTimeout(function () {
+        id = showTab;
+        content = contentDiv.innerHTML;
+        SaveContent(id, content);
+    }, saveContentDelay);
     status.innerHTML = "typing"
 }
 
-function SaveContent() {
-    content = contentDiv.innerHTML;
-    dropnotesdata.upsertTab(showTab, content)
+function SaveContent(id, content) {
+    dropnotesdata.upsertTab(id, content)
     status.innerHTML = "saved"
 }
 
