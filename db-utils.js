@@ -3,20 +3,20 @@ const { v4: uuidv4 } = require('uuid');
 
 class DropNotesData {
 
-    static createEmptyTab() {
+    static createEmptyNote() {
         return DropNotesData.db.put({
             _id: uuidv4(),
             displayname: "new",
             contents: ""
         }).then(function (doc) {
-            return DropNotesData.getTab(doc.id);
+            return DropNotesData.getNote(doc.id);
         }).catch(function (err) {
             console.log(err);
         });
     }
 
-    static getTab(tabId) {
-        return DropNotesData.db.get(tabId).then(function (doc) {
+    static getNote(noteId) {
+        return DropNotesData.db.get(noteId).then(function (doc) {
             return doc;
         }).catch(function (err) {
             // Document not found
@@ -24,10 +24,10 @@ class DropNotesData {
         });
     }
 
-    static upsertTab(tabId, content) {
-        return DropNotesData.db.get(tabId).then(function (doc) {
+    static upsertNote(noteId, content) {
+        return DropNotesData.db.get(noteId).then(function (doc) {
             return DropNotesData.db.put({
-                _id: tabId,
+                _id: noteId,
                 _rev: doc._rev,
                 contents: content
             });
@@ -38,8 +38,8 @@ class DropNotesData {
         });
     }
 
-    static deleteTab(tabId) {
-        DropNotesData.db.get('tabId').then(function (doc) {
+    static deleteNote(noteId) {
+        DropNotesData.db.get('noteId').then(function (doc) {
             return db.remove(doc);
         }).then(function (result) {
             // handle result

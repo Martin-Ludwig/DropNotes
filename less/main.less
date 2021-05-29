@@ -7,20 +7,23 @@ body {
     font-family: system-ui;
 }
 
-#tab-bar {
+#top {
     display: flex;
     height: 40px;
-}
+    #tab-bar {
+        display: flex;
+        overflow-x: auto;
+    }
+    .tab {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        height: 30px;
+        min-width: 120px;
 
-.tab {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    height: 30px;
-    min-width: 120px;
-
-    &.active {
-        background-color: @activetab-bgcolor;
+        &.active {
+            background-color: @activetab-bgcolor;
+        }
     }
 }
 

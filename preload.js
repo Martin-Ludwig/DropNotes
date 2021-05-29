@@ -30,8 +30,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }).catch((err) => {
     })
 
-    document.getElementById('add-new-tab').addEventListener("click", () => {
-        createNewTab();
+    document.getElementById('add-new-note').addEventListener("click", () => {
+        createNewNote();
     });
 
 })
@@ -40,7 +40,7 @@ async function loadTablist() {
     tablist = getTablist();
     if (tablist.length == 0) {
         // initialize first tab
-        newtab = await dropnotesdata.createEmptyTab();
+        newtab = await dropnotesdata.createEmptyNote();
         tablist = addTab(newtab["displayname"], newtab["_id"]);
     }
 
@@ -58,7 +58,6 @@ async function buildTabs() {
         tab.innerHTML = element['name'];
         tab.setAttribute("data-id", element['id'])
         tab.addEventListener("click", (element) => {
-            console.log("Clicked element= ", element.target)
             id = element.target.getAttribute("data-id");
             if (id != "undefined") {
                 // save current tab
@@ -80,7 +79,7 @@ async function buildTabs() {
 // todo: refactor
 // Get content and put contents in editor
 async function SetContent(tabId) {
-    activeTab = await dropnotesdata.getTab(tabId);
+    activeTab = await dropnotesdata.getNote(tabId);
 
     if (activeTab) {
         if (activeTab["contents"]) {
@@ -110,7 +109,7 @@ function OnContentChange() {
 }
 
 function SaveContent(id, content) {
-    dropnotesdata.upsertTab(id, content)
+    dropnotesdata.upsertNote(id, content)
     status.innerHTML = "saved"
 }
 
@@ -156,11 +155,14 @@ function initEditor() {
 
 }
 
-async function createNewTab() {
-    newtab = await dropnotesdata.createEmptyTab();
+
+// Todo: Tab switch event handler
+async function createNewNote() {
+    newtab = await dropnotesdata.createEmptyNote();
     addTab(newtab["displayname"], newtab["_id"]);
 
     tab = document.createElement('div');
+    tab.id = newtab["_id"];
     tab.className = 'tab';
     tab.innerHTML = newtab["displayname"];
 

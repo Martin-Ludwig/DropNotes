@@ -11,18 +11,22 @@ body {
   margin: 0;
   font-family: system-ui;
 }
-#tab-bar {
+#top {
   display: flex;
   height: 40px;
 }
-.tab {
+#top #tab-bar {
+  display: flex;
+  overflow-x: auto;
+}
+#top .tab {
   display: flex;
   align-items: center;
   padding: 5px;
   height: 30px;
   min-width: 120px;
 }
-.tab.active {
+#top .tab.active {
   background-color: #f4f4f4;
 }
 #editor {
