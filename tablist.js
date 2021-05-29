@@ -1,9 +1,14 @@
 const fs = require('fs');
 
+/**
+ * 
+ * 
+ * @returns array
+ */
 function getTablist() {
     try {
         rawdata = fs.readFileSync('./data/local/tablist.json');
-        return tablist = JSON.parse(rawdata);
+        return JSON.parse(rawdata);
     } catch (error) {
         if (error.code === 'ENOENT') {
             return [];

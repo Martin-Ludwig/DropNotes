@@ -1,5 +1,10 @@
-const { app, BrowserWindow } = require('electron')
+'use strict';
+
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+
+let tablist = loadTablist();
+
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -22,6 +27,12 @@ app.whenReady().then(() => {
         }
     })
 
+
+
+    ipcMain.handleOnce("get-tablist", () => {
+        return tablist;
+    })
+
 })
 
 app.on('window-all-closed', () => {
@@ -29,3 +40,23 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
+
+async function loadTablist() {
+    const { getTablist } = require('./tablist.js');
+
+    tablist = await getTablist();
+    if (tablist.length == 0) {
+        // initialize first tab
+        tablist = await initTablist();
+    }
+
+    return tablist;
+}
+
+async function initTablist() {
+    const { dropnotesdata } = require('./db-utils');
+    newtab = await dropnotesdata.createEmptyNote();
+
+    const { addTab } = require('./tablist.js')
+    return addTab(newtab["displayname"], newtab["_id"]);
+}

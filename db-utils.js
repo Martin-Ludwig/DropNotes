@@ -1,3 +1,5 @@
+'use strict';
+
 const PouchDB = require('pouchdb');
 const { v4: uuidv4 } = require('uuid');
 
