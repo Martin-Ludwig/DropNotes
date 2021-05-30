@@ -1,13 +1,12 @@
 'use strict';
 
 const { ipcRenderer } = require("electron");
-const { dropnotesdata } = require('./db-utils');
+const { Note } = require("./note");
 
 let showTab = 'tab1';
 const htmlContentDiv = 'content';
 
 let contentDiv;
-let activeTab;
 let tablist;
 
 let keyupTimeout;
@@ -23,7 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
     var promiseTabs = new Promise((resolve => resolve(buildTabs())));
 
     Promise.all([promiseEditor, promiseTabs]).then(() => {
-        SetContent(showTab);
+        switchToNote(showTab);
         contentDiv = document.getElementById('editor').getElementsByClassName(htmlContentDiv)[0]
 
         status = document.querySelector("#status");
@@ -46,13 +45,18 @@ window.addEventListener('DOMContentLoaded', () => {
             // switch tab
             // todo: don't switch to same tab
             showTab = e.id;
-            SetContent(e.id);
+            switchToNote(e.id);
         }
     });
 
     // Todo Event: delete note
 
+    /** New note
+    ipcRenderer.on('note-add', (event, note) => {
+    });
+    */
 })
+
 
 /**
  * Fills #tab-bar
@@ -73,23 +77,23 @@ async function buildTabs() {
     });
 }
 
+function switchToNote(noteId) {
+    ipcRenderer.invoke('note-get', noteId).then((result) => {
+        var note = result;
+        setContent(note.content)
 
-// todo: refactor
-// Get content and put contents in editor
-async function SetContent(tabId) {
-    var activeTab = await dropnotesdata.getNote(tabId);
+        // set text cursor
+        focusEditor(contentDiv);
+    });
+}
 
-    var content = '';
-    if (activeTab && activeTab["contents"]) {
-        content = activeTab["contents"];
-    }
 
+function setContent(content) {
     // Set content
     contentDiv.innerHTML = content;
-
-    // set text cursor
-    FocusEditor(contentDiv);
 }
+
+
 
 /**
  * Tracks user input and saves note when done typing.
@@ -105,7 +109,8 @@ function OnContentChange() {
 }
 
 function SaveContent(id, content) {
-    dropnotesdata.upsertNote(id, content)
+    var note = new Note(id, 'new', content);
+    ipcRenderer.send('note-update', note)
     status.innerHTML = "saved"
 }
 
@@ -114,12 +119,11 @@ function SaveContent(id, content) {
  * 
  * @param Node contentEditableElement 
  */
-function FocusEditor(contentEditableElement) {
-    var range, selection;
-    range = document.createRange();
+function focusEditor(contentEditableElement) {
+    var range = document.createRange();
     range.selectNodeContents(contentEditableElement);
     range.collapse(false);
-    selection = window.getSelection();
+    var selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
 }
@@ -159,15 +163,18 @@ function initEditor() {
 
 
 async function createNewNote() {
-    var newtab = await dropnotesdata.createEmptyNote();
-    addTab(newtab["displayname"], newtab["_id"]);
+    ipcRenderer.invoke("note-create").then((result) => {
+        var newNote = result;
 
-    var tab = document.createElement('div');
-    tab.id = newtab["_id"];
-    tab.className = 'tab';
-    tab.innerHTML = newtab["displayname"];
+        addTab(newNote.name, newNote.id);
 
-    document.getElementById('tab-bar').appendChild(tab);
+        var tab = document.createElement('div');
+        tab.id = newNote.id;
+        tab.className = 'tab';
+        tab.innerHTML = newNote.name;
 
-    SetContent(newtab["_id"]);
+        document.getElementById('tab-bar').appendChild(tab);
+
+        switchToNote(newNote.id)
+    });
 }

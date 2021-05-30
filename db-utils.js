@@ -2,28 +2,44 @@
 
 const PouchDB = require('pouchdb');
 const { v4: uuidv4 } = require('uuid');
+const { Note } = require('./note');
+
+// todo: insert and update function
 
 class DropNotesData {
 
+    /**
+     * 
+     * @returns Note
+     */
     static createEmptyNote() {
-        return DropNotesData.db.put({
+        var note = DropNotesData.db.put({
             _id: uuidv4(),
             displayname: "new",
-            contents: ""
+            content: ""
         }).then(function (doc) {
             return DropNotesData.getNote(doc.id);
         }).catch(function (err) {
             console.log(err);
         });
+
+        return note;
     }
 
-    static getNote(noteId) {
-        return DropNotesData.db.get(noteId).then(function (doc) {
+    /**
+     * 
+     * @param {uuidv4} noteId 
+     * @returns Note
+     */
+    static async getNote(noteId) {
+        var doc = await DropNotesData.db.get(noteId).then(function (doc) {
             return doc;
         }).catch(function (err) {
             // Document not found
             return null
         });
+
+        return new Note(doc["_id"], doc["displayname"], doc["content"])
     }
 
     static upsertNote(noteId, content) {
@@ -31,7 +47,7 @@ class DropNotesData {
             return DropNotesData.db.put({
                 _id: noteId,
                 _rev: doc._rev,
-                contents: content
+                content: content
             });
         }).then(function (response) {
             // handle response
@@ -41,7 +57,7 @@ class DropNotesData {
     }
 
     static deleteNote(noteId) {
-        DropNotesData.db.get('noteId').then(function (doc) {
+        DropNotesData.db.get(noteId).then(function (doc) {
             return db.remove(doc);
         }).then(function (result) {
             // handle result
@@ -50,7 +66,7 @@ class DropNotesData {
         });
     }
 
-    static getAllTabs() {
+    static getAllNotes() {
         return DropNotesData.db.allDocs();
     }
 

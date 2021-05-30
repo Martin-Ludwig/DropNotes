@@ -3,6 +3,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
+const { dropnotesdata } = require('./db-utils');
+
+
 let tablist = loadTablist();
 
 
@@ -27,10 +30,26 @@ app.whenReady().then(() => {
         }
     })
 
-
-
     ipcMain.handleOnce("get-tablist", () => {
         return tablist;
+    })
+
+    ipcMain.handle('note-create', async (event) => {
+        var note = await dropnotesdata.createEmptyNote();
+        return note;
+    })
+
+    ipcMain.handle('note-get', async (event, noteId) => {
+        var note = await dropnotesdata.getNote(noteId);
+        return note;
+    })
+
+    ipcMain.on('note-update', (event, note) => {
+        dropnotesdata.upsertNote(note.id, note.content)
+    })
+
+    ipcMain.on('note-delete', (event, noteId) => {
+        dropnotesdata.deleteNote(noteId)
     })
 
 })
@@ -54,9 +73,8 @@ async function loadTablist() {
 }
 
 async function initTablist() {
-    const { dropnotesdata } = require('./db-utils');
-    newtab = await dropnotesdata.createEmptyNote();
+    var newtab = await dropnotesdata.createEmptyNote();
 
     const { addTab } = require('./tablist.js')
-    return addTab(newtab["displayname"], newtab["_id"]);
+    return addTab(newtab.name, newtab.id);
 }
