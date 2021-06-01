@@ -8,7 +8,6 @@ const { dropnotesdata } = require('./db-utils');
 
 let tablist = loadTablist();
 
-
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
