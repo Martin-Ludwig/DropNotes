@@ -3,7 +3,6 @@
 const { ipcRenderer } = require("electron");
 const { Editor } = require("./editor");
 const { Note } = require("./note");
-const { addTab } = require('./tablist.js')
 
 const editorContentClass = 'content';
 const saveContentDelay = 700;
@@ -169,8 +168,6 @@ function initEditor() {
 async function createNewNote() {
     ipcRenderer.invoke("note-create").then((result) => {
         var newNote = result;
-
-        addTab(newNote.name, newNote.id);
 
         var tab = document.createElement('div');
         tab.id = newNote.id;

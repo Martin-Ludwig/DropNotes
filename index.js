@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
 const { dropnotesdata } = require('./db-utils');
-
+const { addTab } = require('./tablist.js')
 
 let tablist = loadTablist();
 
@@ -35,6 +35,7 @@ app.whenReady().then(() => {
 
     ipcMain.handle('note-create', async (event) => {
         var note = await dropnotesdata.createEmptyNote();
+        addTab(note.name, note.id);
         return note;
     })
 
@@ -74,6 +75,5 @@ async function loadTablist() {
 async function initTablist() {
     var newtab = await dropnotesdata.createEmptyNote();
 
-    const { addTab } = require('./tablist.js')
     return addTab(newtab.name, newtab.id);
 }
