@@ -13,7 +13,7 @@ body {
 }
 #top {
   display: flex;
-  height: 40px;
+  height: 45px;
 }
 #top #tab-bar {
   display: flex;
@@ -25,6 +25,12 @@ body {
   padding: 5px;
   height: 30px;
   min-width: 120px;
+  padding-top: 3px;
+  border-top: 2px solid transparent;
+}
+#top .tab:hover {
+  border-top: 2px solid #f4f4f4;
+  background-color: rgba(244, 244, 244, 0.5);
 }
 #top .tab.active {
   background-color: #f4f4f4;

@@ -9,7 +9,7 @@ body {
 
 #top {
     display: flex;
-    height: 40px;
+    height: 45px;
     #tab-bar {
         display: flex;
         overflow-x: auto;
@@ -20,6 +20,13 @@ body {
         padding: 5px;
         height: 30px;
         min-width: 120px;
+
+        padding-top: 5px - @tab-hover-border-thickness;
+        border-top: @tab-hover-border-thickness solid transparent;
+        &:hover {
+            border-top: @tab-hover-border-thickness solid @tab-hover-border-color;
+            background-color: fade(@tab-hover-background-color, @tab-hover-background-color-transparency);
+        }
 
         &.active {
             background-color: @activetab-bgcolor;
