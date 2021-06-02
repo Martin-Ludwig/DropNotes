@@ -80,6 +80,8 @@ async function buildTabs() {
  * @param {uuid} noteId 
  */
 async function switchToNote(noteId) {
+    removeActiveClass(currentNote.id);
+
     if (currentNote !== undefined && currentNote.id !== undefined) {
         // cache note
         cache.set(currentNote.id, currentNote);
@@ -90,6 +92,8 @@ async function switchToNote(noteId) {
 
     // set text cursor
     focusEditor(editor.getContext());
+
+    setActiveClass(currentNote.id);
 }
 
 
@@ -194,5 +198,19 @@ async function getNote(noteId) {
         return ipcRenderer.invoke('note-get', noteId).then((result) => {
             return result;
         });
+    }
+}
+
+function removeActiveClass(tabId) {
+    var e = document.getElementById(tabId);
+    if (e != null) {
+        e.classList.remove("active");
+    }
+}
+
+function setActiveClass(tabId) {
+    var e = document.getElementById(tabId);
+    if (e != null) {
+        e.classList.add("active");
     }
 }
