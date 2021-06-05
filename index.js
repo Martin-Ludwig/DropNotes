@@ -1,10 +1,10 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
 
 const { dropnotesdata } = require('./db-utils');
-const { addTab } = require('./tablist.js')
+const { getTablist, addTab, removeTab, setActiveTab } = require('./tablist.js');
 
 let tablist = loadTablist();
 
@@ -15,54 +15,66 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
-    })
+    });
 
-    win.loadFile('index.html')
+    win.loadFile('index.html');
 }
 
 app.whenReady().then(() => {
-    createWindow()
+    createWindow();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
         }
-    })
+    });
 
     ipcMain.handleOnce("get-tablist", () => {
         return tablist;
-    })
+    });
 
     ipcMain.handle('note-create', async (event) => {
         var note = await dropnotesdata.createEmptyNote();
         addTab(note.name, note.id);
         return note;
-    })
+    });
 
     ipcMain.handle('note-get', async (event, noteId) => {
         var note = await dropnotesdata.getNote(noteId);
         return note;
-    })
+    });
 
     ipcMain.on('note-update', (event, note) => {
-        dropnotesdata.upsertNote(note.id, note.content)
-    })
+        dropnotesdata.upsertNote(note.id, note.content);
+    });
 
-    ipcMain.on('note-delete', (event, noteId) => {
-        dropnotesdata.deleteNote(noteId)
-    })
+    ipcMain.handle('note-delete', async (event, noteId) => {
+        tablist = await getTablist();
+
+        if (tablist.length > 1) {
+            dropnotesdata.deleteNote(noteId);
+            tablist = await removeTab(noteId);
+
+            // todo tab switch history
+            return tablist[0]["id"];
+        } else {
+            return null;
+        }
+    });
+
+    ipcMain.on('note-switch', (event, noteId) => {
+        setActiveTab(noteId);
+    });
 
 })
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
 })
 
 async function loadTablist() {
-    const { getTablist } = require('./tablist.js');
-
     tablist = await getTablist();
     if (tablist.length == 0) {
         // initialize first tab

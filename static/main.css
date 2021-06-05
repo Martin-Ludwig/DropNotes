@@ -52,7 +52,7 @@ body {
 #editor .content:focus {
   outline: none;
 }
-#status {
+#statusbar {
   position: fixed;
   bottom: 0px;
   width: 100%;
@@ -61,4 +61,11 @@ body {
   user-select: none;
   padding: 3px;
   font-size: 12px;
+}
+#statusbar div {
+  display: inline-block;
+}
+#statusbar #delete-note {
+  float: right;
+  margin-right: 10px;
 }

@@ -58,7 +58,7 @@ class DropNotesData {
 
     static deleteNote(noteId) {
         DropNotesData.db.get(noteId).then(function (doc) {
-            return db.remove(doc);
+            return DropNotesData.db.remove(doc);
         }).then(function (result) {
             // handle result
         }).catch(function (err) {

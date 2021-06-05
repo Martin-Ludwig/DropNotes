@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
         var e = document.getElementById('editor').getElementsByClassName(editorContentClass)[0];
         editor = new Editor(e);
 
-        status = document.querySelector("#status");
+        status = document.querySelector("#input-status");
     })
 
     // Click event: create new note
@@ -51,6 +51,19 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // Todo Event: delete note
+    document.getElementById('delete-note').addEventListener("click", async (element) => {
+        // deletes current and returns the next tab
+        var nextNoteId = await ipcRenderer.invoke("note-delete", currentNote.id);
+
+        if (nextNoteId != null) {
+            cache.delete(currentNote.id);
+            document.getElementById(currentNote.id).remove();
+            switchToNote(nextNoteId);
+        } else {
+            clearNoteContent();
+        }
+
+    });
 
 })
 
@@ -79,20 +92,34 @@ async function buildTabs() {
  * @param {uuid} noteId 
  */
 async function switchToNote(noteId) {
-    removeActiveClass(currentNote.id);
+    try {
+        if (noteId == null) {
+            throw "Cannot switch to DropNote. DropNote does not exist.";
+        }
 
-    if (currentNote !== undefined && currentNote.id !== undefined) {
-        // cache note
-        cache.set(currentNote.id, currentNote);
+        removeActiveClass(currentNote.id);
+
+        if (currentNote !== undefined && currentNote.id !== undefined) {
+            // cache note
+            cache.set(currentNote.id, currentNote);
+        }
+
+        currentNote = await getNote(noteId);
+        ipcRenderer.send('note-switch', currentNote.id);
+
+        editor.setContent(currentNote.content);
+
+        // set text cursor
+        focusEditor(editor.getContext());
+
+        setActiveClass(currentNote.id);
+
+
+    } catch (error) {
+        console.log(error);
     }
 
-    currentNote = await getNote(noteId);
-    editor.setContent(currentNote.content);
 
-    // set text cursor
-    focusEditor(editor.getContext());
-
-    setActiveClass(currentNote.id);
 }
 
 
@@ -210,4 +237,10 @@ function setActiveClass(tabId) {
     if (e != null) {
         e.classList.add("active");
     }
+}
+
+function clearNoteContent() {
+    editor.setContent("");
+    OnContentChange();
+    focusEditor(editor.getContext());
 }
