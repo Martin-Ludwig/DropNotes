@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
+*.code-workspace
 logs
 *.log
 package-lock.json
