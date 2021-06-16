@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 const { dropnotesdata } = require('./db-utils');
-const { getTablist, addTab, removeTab, setActiveTab } = require('./tablist.js');
+const { getTablist, addTab, removeTab, setActiveTab, renameTab } = require('./tablist.js');
 
 let tablist = loadTablist();
 
@@ -64,6 +64,10 @@ app.whenReady().then(() => {
 
     ipcMain.on('note-switch', (event, noteId) => {
         setActiveTab(noteId);
+    });
+
+    ipcMain.on('note-rename', (event, noteId, newName) => {
+        renameTab(noteId, newName);
     });
 
 })

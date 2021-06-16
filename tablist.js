@@ -60,8 +60,22 @@ function setActiveTab(id) {
     updateTablist(data_update);
 }
 
+function renameTab(id, newName) {
+    data_update = [];
+    data = getTablist();
+    data.forEach(tab => {
+        if (tab["id"] == id) {
+            tab["name"] = newName;
+        }
+        data_update.push(tab);
+    });
+
+    updateTablist(data_update);
+}
+
 module.exports.getTablist = getTablist
 module.exports.updateTablist = updateTablist
 module.exports.addTab = addTab
 module.exports.removeTab = removeTab
 module.exports.setActiveTab = setActiveTab
+module.exports.renameTab = renameTab
