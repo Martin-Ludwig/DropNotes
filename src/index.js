@@ -40,34 +40,44 @@ app.whenReady().then(() => {
     });
 
     ipcMain.handle('note-get', async (event, noteId) => {
-        var note = await dropnotesdata.getNote(noteId);
-        return note;
+        if (noteId !== null) {
+            var note = await dropnotesdata.getNote(noteId);
+            return note;
+        }
     });
 
     ipcMain.on('note-update', (event, note) => {
-        dropnotesdata.upsertNote(note.id, note.content);
+        if (note !== null) {
+            dropnotesdata.upsertNote(note.id, note.content);
+        }
     });
 
     ipcMain.handle('note-delete', async (event, noteId) => {
-        tablist = await getTablist();
+        if (noteId !== null) {
+            tablist = await getTablist();
 
-        if (tablist.length > 1) {
-            dropnotesdata.deleteNote(noteId);
-            tablist = await removeTab(noteId);
+            if (tablist.length > 1) {
+                dropnotesdata.deleteNote(noteId);
+                tablist = await removeTab(noteId);
 
-            // todo tab switch history
-            return tablist[0]["id"];
-        } else {
-            return null;
+                // todo tab switch history
+                return tablist[0]["id"];
+            } else {
+                return null;
+            }
         }
     });
 
     ipcMain.on('note-switch', (event, noteId) => {
-        setActiveTab(noteId);
+        if (noteId !== null) {
+            setActiveTab(noteId);
+        }
     });
 
     ipcMain.on('note-rename', (event, noteId, newName) => {
-        renameTab(noteId, newName);
+        if (noteId !== null && newName !== null) {
+            renameTab(noteId, newName);
+        }
     });
 
 })
