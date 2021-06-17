@@ -36,7 +36,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Click event: switch notes
     document.getElementById('tab-bar').addEventListener("click", (element) => {
+        if (element.target.id == "tab-bar") {
+            return;
+        }
+
         var nextTab = element.target
+
+        console.log("getElementById('tab-bar'):element.target= ", element.target);
 
         if (nextTab.id !== undefined &&
             nextTab.id !== currentNote.id) {
