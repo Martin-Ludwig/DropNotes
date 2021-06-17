@@ -2,7 +2,7 @@
 Use https://lesscss.org/ to compile less files to css. Use with Node.js: npm install -g less
 
 Cli command:
-lessc ./less/light-theme.less ./static/main.css
+lessc ./src/less/light-theme.less ./src/static/main.css
 */
 
 // Light Color Theme
@@ -14,5 +14,6 @@ lessc ./less/light-theme.less ./static/main.css
 @tab-hover-border-thickness: 2px;
 @tab-hover-background-color: @activetab-bgcolor;
 @tab-hover-background-color-transparency: 50%;
+@outline-color: @activetab-bgcolor;
 
 @import "main.less";

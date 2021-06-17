@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             // switch note
             switchToNote(nextTab.id);
-        } else {
+        } else if (element.target.id !== document.activeElement.id) {
             // todo: refactor
             // todo: disable newline, maxlength
             // rename note
@@ -77,7 +77,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('tab-bar').addEventListener("focusout", (element) => {
-        console.log("FocusOut:element.target= ", element.target);
         element.target.setAttribute("contenteditable", false);
         ipcRenderer.send('note-rename', element.target.id, element.target.innerHTML);
     });

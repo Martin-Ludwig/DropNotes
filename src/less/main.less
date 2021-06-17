@@ -28,9 +28,17 @@ body {
             background-color: fade(@tab-hover-background-color, @tab-hover-background-color-transparency);
         }
 
+        cursor: default;
         &.active {
+            cursor: initial;
             background-color: @activetab-bgcolor;
         }
+
+        &:focus {
+            //outline: none;
+            outline-color: @outline-color;
+        }
+
     }
 }
 

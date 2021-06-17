@@ -2,7 +2,7 @@
 Use https://lesscss.org/ to compile less files to css. Use with Node.js: npm install -g less
 
 Cli command:
-lessc ./less/light-theme.less ./static/main.css
+lessc ./src/less/light-theme.less ./src/static/main.css
 */
 html {
   background-color: #fff;
@@ -27,13 +27,18 @@ body {
   min-width: 120px;
   padding-top: 3px;
   border-top: 2px solid transparent;
+  cursor: default;
 }
 #top .tab:hover {
   border-top: 2px solid #f4f4f4;
   background-color: rgba(244, 244, 244, 0.5);
 }
 #top .tab.active {
+  cursor: initial;
   background-color: #f4f4f4;
+}
+#top .tab:focus {
+  outline-color: #f4f4f4;
 }
 #editor {
   flex-direction: column;
