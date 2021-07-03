@@ -87,6 +87,14 @@ window.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('note-rename', element.target.id, element.target.innerHTML);
     });
 
+    // tab pressed: insert \t 
+    document.getElementById('editor').addEventListener('keydown', function (e) {
+        if (e.key == 'Tab') {
+            e.preventDefault();
+            editor.inserHtml("\t");
+        }
+    });
+
 })
 
 /**
