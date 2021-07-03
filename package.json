@@ -1,7 +1,7 @@
 {
   "name": "DropNotes",
   "version": "1.0.0",
-  "description": "",
+  "description": "Writing notes fast and easy.",
   "main": "./src/index.js",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
@@ -24,11 +24,13 @@
     "make": "electron-forge make"
   },
   "keywords": [],
-  "author": "",
+  "author": "Martin Ludwig",
   "license": "ISC",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./assets/icon.ico"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
