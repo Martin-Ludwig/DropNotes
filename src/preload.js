@@ -87,6 +87,14 @@ window.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('note-rename', element.target.id, element.target.innerHTML);
     });
 
+    document.getElementById('tab-bar').addEventListener("wheel", (element) => {
+        const tabbar = document.getElementById('tab-bar');
+        if (tabbar.scrollWidth > tabbar.offsetWidth) {
+            element.preventDefault();
+            tabbar.scrollLeft += element.deltaY * 0.3;
+        }
+    });
+
     // tab pressed: insert \t 
     document.getElementById('editor').addEventListener('keydown', function (e) {
         if (e.key == 'Tab') {
