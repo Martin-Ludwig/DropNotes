@@ -29,7 +29,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./assets/icon.ico"
+        "icon": "./assets/icon.png"
       },
       "makers": [
         {
